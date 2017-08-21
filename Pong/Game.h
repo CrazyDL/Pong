@@ -21,6 +21,7 @@ private:
     sf::Clock clock;
     sf::Sprite spriteFon;
     sf::Texture textureFon;
+    sf::Font font;
     sf::Text score;
     Player player1;
     Player player2;

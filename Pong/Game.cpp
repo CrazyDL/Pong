@@ -12,6 +12,11 @@ void Game::DrawField() {
     textureFon.loadFromFile("../Images/fon.png");
     spriteFon.setTexture(textureFon);
     spriteFon.setTextureRect(sf::IntRect(0, 0, FIELD_WIDTH, FIELD_HEIGHT));
+    font.loadFromFile("../Images/CyrilicOld.ttf");
+    score.setFont(font);
+    score.setCharacterSize(60);
+    score.setFillColor(sf::Color::White);
+    score.setStyle(sf::Text::Bold);
 }
 
 void Game::Start() {
@@ -30,12 +35,8 @@ void Game::Start() {
         player2.Update(time);
         ball.Update(time, player1, player2);
 
-        /*score.setString("kek");//std::to_string(player1.score) + ":" + std::to_string(player2.score));
-        score.setCharacterSize(100);
-        score.setFillColor(sf::Color::White);
-        score.setStyle(sf::Text::Bold);
-        score.setPosition(0, 0);*/
-
+        score.setString(std::to_string(player1.score) + " : " + std::to_string(player2.score));
+        score.setPosition(FIELD_WIDTH / 2 - score.getGlobalBounds().width / 2, 0);
 
         window.clear();
         window.draw(spriteFon);
