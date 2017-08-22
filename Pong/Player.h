@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-const float PLAYER_SPEED = 0.0008f;
+const float PLAYER_SPEED = 0.0006f;
 const int32_t PLAYER_WIDTH = 18;
 const int32_t PLAYER_HEIGHT = 104;
 const int32_t HALF_PLAYER_WIDTH = PLAYER_WIDTH / 2;

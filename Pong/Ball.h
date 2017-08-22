@@ -18,4 +18,6 @@ private:
     float x, y, dx, dy;
     sf::Sprite sprite;
     sf::Texture texture;
+
+    bool CheckCollision(int8_t route, float playerX, float playerY);
 };

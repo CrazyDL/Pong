@@ -5,7 +5,7 @@
 #include "Player.h"
 #include "Ball.h"
 
-const int32_t FIELD_WIDTH = 1000;
+const int32_t FIELD_WIDTH = 800;
 const int32_t FIELD_HEIGHT = 600;
 
 class Game {
