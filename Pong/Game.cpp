@@ -6,7 +6,6 @@ Game::Game() : player1(10 + HALF_PLAYER_WIDTH, FIELD_HEIGHT / 2, 1),
                window(sf::VideoMode(FIELD_WIDTH, FIELD_HEIGHT), "Pong", sf::Style::Close),
                active(false), newGame(true), pause(false) {
     window.setVerticalSyncEnabled(true);
-    window.setKeyRepeatEnabled(false);
     DrawField();
 }
 
@@ -47,7 +46,6 @@ void Game::DrawField() {
 void Game::Start() {
     sf::Event event;
     float time;
-    int8_t menuNumKeyboard = -1;
     Menu();
     window.setKeyRepeatEnabled(false);
     while (window.isOpen()) {
@@ -56,7 +54,6 @@ void Game::Start() {
         if (player1.score == 7 || player2.score == 7) {
             active = false;
             newGame = true;
-            menuNumKeyboard = -1;
             if (player1.score == 7 ) {
                 score.setString("Left Player win!");
             }
@@ -93,7 +90,6 @@ void Game::Start() {
                 ball.Update(time, player1, player2);
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
                     active = false;
-                    menuNumKeyboard = -1;
                 }
             }
             else {
@@ -128,24 +124,6 @@ void Game::Start() {
                         break;
                     }
                 }
-                window.setKeyRepeatEnabled(true);
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Down)){
-                    menuNumKeyboard++;
-                    if (menuNumKeyboard >= MENU_COUNT) {
-                        menuNumKeyboard = 0;
-                    }
-                    if (menuNumKeyboard == 0 && newGame) {
-                        menuNumKeyboard++;
-                    }
-                    menuItems[menuNumKeyboard].setFillColor(sf::Color::Cyan);
-                }
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Up)) {
-                    menuNumKeyboard--;
-                    if (menuNumKeyboard < 0 || (menuNumKeyboard == 0 && newGame)) {
-                        menuNumKeyboard = MENU_COUNT - 1;
-                    }
-                    menuItems[menuNumKeyboard].setFillColor(sf::Color::Cyan);
-                }
             }
 
             window.clear();
@@ -170,8 +148,9 @@ void Game::Reset() {
     player2.score = 0;
     player1.y = FIELD_HEIGHT / 2;
     player2.y = FIELD_HEIGHT / 2;
-    ball.sprite.setPosition(FIELD_HEIGHT / 2, FIELD_WIDTH / 2);
     ball.dx = 0;
     ball.dy = 0;
+    ball.x = FIELD_WIDTH / 2;
+    ball.y = FIELD_HEIGHT / 2;
     newGame = true;
 }
