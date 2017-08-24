@@ -3,9 +3,33 @@
 Game::Game() : player1(10 + HALF_PLAYER_WIDTH, FIELD_HEIGHT / 2, 1),
                player2(FIELD_WIDTH - 10 - HALF_PLAYER_WIDTH, FIELD_HEIGHT / 2, 2),
                ball(FIELD_WIDTH / 2, FIELD_HEIGHT / 2),
-               window(sf::VideoMode(FIELD_WIDTH, FIELD_HEIGHT), "Pong", sf::Style::Close) {
+               window(sf::VideoMode(FIELD_WIDTH, FIELD_HEIGHT), "Pong", sf::Style::Close),
+               active(false), newGame(true) {
     window.setVerticalSyncEnabled(true);
     DrawField();
+}
+
+void Game::Menu() {
+    menuFon.setSize(sf::Vector2f(FIELD_WIDTH / 3, FIELD_HEIGHT / 3));
+    menuFon.setOutlineColor(sf::Color(255, 255, 255, 220));
+    menuFon.setOutlineThickness(2);
+    menuFon.setFillColor(sf::Color(20, 20, 20));
+    menuFon.setOrigin(FIELD_WIDTH / 6, FIELD_HEIGHT / 6);
+    menuFon.setPosition(FIELD_WIDTH / 2, FIELD_HEIGHT / 2);
+
+    menuItems[0].setString("Continue");
+    menuItems[1].setString("New Game");
+    menuItems[2].setString("Exit");
+
+    float maxHeight = (menuFon.getGlobalBounds().height / (MENU_COUNT * 2));
+    for (int32_t i = 0; i < MENU_COUNT; i++) {
+        menuItems[i].setFont(font);
+        menuItems[i].setCharacterSize((uint32_t)(maxHeight * 1.5));
+        menuItems[i].setFillColor(sf::Color::White);
+        menuItems[i].setStyle(sf::Text::Bold);
+        menuItems[i].setPosition(menuFon.getGlobalBounds().left + 20, menuFon.getGlobalBounds().top + maxHeight * 1.8f * i);
+    }
+
 }
 
 void Game::DrawField() {
@@ -22,6 +46,7 @@ void Game::DrawField() {
 void Game::Start() {
     sf::Event event;
     float time;
+    Menu();
     while (window.isOpen()) {
         time = (float)clock.getElapsedTime().asMicroseconds();
         clock.restart();
@@ -31,12 +56,23 @@ void Game::Start() {
                 window.close();
             }
         }
-        player1.Update(time);
-        player2.Update(time);
-        ball.Update(time, player1, player2);
-
         score.setString(std::to_string(player1.score) + " : " + std::to_string(player2.score));
         score.setPosition(FIELD_WIDTH / 2 - score.getGlobalBounds().width / 2, 0);
+        if (active) {
+            player1.Update(time);
+            player2.Update(time);
+            ball.Update(time, player1, player2);
+        }
+        else {
+            for (int32_t i = 0; i < MENU_COUNT; i++) {
+                if (sf::IntRect(menuItems[i].getGlobalBounds()).contains(sf::Mouse::getPosition(window))) {
+                    menuItems[i].setFillColor(sf::Color::Cyan);
+                }
+                else {
+                    menuItems[i].setFillColor(sf::Color::White);
+                }
+            }
+        }
 
         window.clear();
         window.draw(spriteFon);
@@ -44,6 +80,12 @@ void Game::Start() {
         window.draw(player2.sprite);
         window.draw(ball.sprite);
         window.draw(score);
+        if (!active) {
+            window.draw(menuFon);
+            for (int32_t i = 0; i < MENU_COUNT; i++) {
+                window.draw(menuItems[i]);
+            }
+        }
         window.display();
     }
 }

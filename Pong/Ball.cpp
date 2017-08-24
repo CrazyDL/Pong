@@ -36,9 +36,9 @@ bool Ball::CheckCollision(int8_t route, float playerX, float playerY) {
 
 void Ball::Update(float time, Player &player1, Player &player2) {
     if (!dx && !dy) {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
             int32_t rnd = std::rand() % 2;
-            dx = BALL_SPEED * (rnd ? 2 : -2);
+            dx = BALL_SPEED * (rnd ? 1.5f : -1.5f);
             rnd = std::rand() % 2;
             dy = BALL_SPEED * (rnd ? 1 : -1);
         }
@@ -74,7 +74,6 @@ void Ball::Update(float time, Player &player1, Player &player2) {
         dy = 0;
         x = FIELD_WIDTH / 2;
         y = FIELD_HEIGHT / 2;
-        _sleep(200);
     }
     sprite.setPosition(x, y);
 }
