@@ -17,6 +17,7 @@ public:
     void Menu();
 protected:
     void DrawField();
+    void Reset();
 
 private:
     sf::RenderWindow window;
@@ -30,6 +31,7 @@ private:
     Player player1;
     Player player2;
     Ball ball;
+    bool pause;
     bool active;
     bool newGame;
 };

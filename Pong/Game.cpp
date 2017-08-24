@@ -4,8 +4,9 @@ Game::Game() : player1(10 + HALF_PLAYER_WIDTH, FIELD_HEIGHT / 2, 1),
                player2(FIELD_WIDTH - 10 - HALF_PLAYER_WIDTH, FIELD_HEIGHT / 2, 2),
                ball(FIELD_WIDTH / 2, FIELD_HEIGHT / 2),
                window(sf::VideoMode(FIELD_WIDTH, FIELD_HEIGHT), "Pong", sf::Style::Close),
-               active(false), newGame(true) {
+               active(false), newGame(true), pause(false) {
     window.setVerticalSyncEnabled(true);
+    window.setKeyRepeatEnabled(false);
     DrawField();
 }
 
@@ -46,46 +47,131 @@ void Game::DrawField() {
 void Game::Start() {
     sf::Event event;
     float time;
+    int8_t menuNumKeyboard = -1;
     Menu();
+    window.setKeyRepeatEnabled(false);
     while (window.isOpen()) {
         time = (float)clock.getElapsedTime().asMicroseconds();
         clock.restart();
-
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
+        if (player1.score == 7 || player2.score == 7) {
+            active = false;
+            newGame = true;
+            menuNumKeyboard = -1;
+            if (player1.score == 7 ) {
+                score.setString("Left Player win!");
             }
-        }
-        score.setString(std::to_string(player1.score) + " : " + std::to_string(player2.score));
-        score.setPosition(FIELD_WIDTH / 2 - score.getGlobalBounds().width / 2, 0);
-        if (active) {
-            player1.Update(time);
-            player2.Update(time);
-            ball.Update(time, player1, player2);
+            else {
+                score.setString("Right Player win!");
+            }
         }
         else {
-            for (int32_t i = 0; i < MENU_COUNT; i++) {
-                if (sf::IntRect(menuItems[i].getGlobalBounds()).contains(sf::Mouse::getPosition(window))) {
-                    menuItems[i].setFillColor(sf::Color::Cyan);
-                }
-                else {
-                    menuItems[i].setFillColor(sf::Color::White);
-                }
-            }
+            score.setString(std::to_string(player1.score) + " : " + std::to_string(player2.score));
         }
+        score.setPosition(FIELD_WIDTH / 2 - score.getGlobalBounds().width / 2, 0);
 
-        window.clear();
-        window.draw(spriteFon);
-        window.draw(player1.sprite);
-        window.draw(player2.sprite);
-        window.draw(ball.sprite);
-        window.draw(score);
-        if (!active) {
-            window.draw(menuFon);
-            for (int32_t i = 0; i < MENU_COUNT; i++) {
-                window.draw(menuItems[i]);
+        while (window.pollEvent(event)) {
+            switch (event.type) {
+            case sf::Event::Closed:
+                window.close();
+                break;
+            case sf::Event::LostFocus:
+                pause = true;
+                break;
+            case sf::Event::GainedFocus:
+                pause = false;
+                break;
+            default:
+                break;
             }
         }
-        window.display();
+        
+        if (!pause) {
+            if (active) {
+                newGame = false;
+                player1.Update(time);
+                player2.Update(time);
+                ball.Update(time, player1, player2);
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    active = false;
+                    menuNumKeyboard = -1;
+                }
+            }
+            else {
+                int8_t menuNum = -1;
+                for (int32_t i = 0; i < MENU_COUNT; i++) {
+                    if (i == 0 && newGame) {
+                        menuItems[i].setFillColor(sf::Color(128, 128, 128));
+                        continue;
+                    }
+                    if (sf::IntRect(menuItems[i].getGlobalBounds()).contains(sf::Mouse::getPosition(window))) {
+                        menuItems[i].setFillColor(sf::Color::Cyan);
+                        menuNum = i;
+                    }
+                    else {
+                        menuItems[i].setFillColor(sf::Color::White);
+                    }
+                }
+
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                    switch (menuNum) {
+                    case 0:
+                        active = true;
+                        break;
+                    case 1:
+                        Reset();
+                        active = true;
+                        break;
+                    case 2:
+                        window.close();
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                window.setKeyRepeatEnabled(true);
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Down)){
+                    menuNumKeyboard++;
+                    if (menuNumKeyboard >= MENU_COUNT) {
+                        menuNumKeyboard = 0;
+                    }
+                    if (menuNumKeyboard == 0 && newGame) {
+                        menuNumKeyboard++;
+                    }
+                    menuItems[menuNumKeyboard].setFillColor(sf::Color::Cyan);
+                }
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Up)) {
+                    menuNumKeyboard--;
+                    if (menuNumKeyboard < 0 || (menuNumKeyboard == 0 && newGame)) {
+                        menuNumKeyboard = MENU_COUNT - 1;
+                    }
+                    menuItems[menuNumKeyboard].setFillColor(sf::Color::Cyan);
+                }
+            }
+
+            window.clear();
+            window.draw(spriteFon);
+            window.draw(player1.sprite);
+            window.draw(player2.sprite);
+            window.draw(ball.sprite);
+            window.draw(score);
+            if (!active) {
+                window.draw(menuFon);
+                for (int32_t i = 0; i < MENU_COUNT; i++) {
+                    window.draw(menuItems[i]);
+                }
+            }
+            window.display();
+        }
     }
+}
+
+void Game::Reset() {
+    player1.score = 0;
+    player2.score = 0;
+    player1.y = FIELD_HEIGHT / 2;
+    player2.y = FIELD_HEIGHT / 2;
+    ball.sprite.setPosition(FIELD_HEIGHT / 2, FIELD_WIDTH / 2);
+    ball.dx = 0;
+    ball.dy = 0;
+    newGame = true;
 }

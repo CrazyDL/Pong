@@ -74,6 +74,7 @@ void Ball::Update(float time, Player &player1, Player &player2) {
         dy = 0;
         x = FIELD_WIDTH / 2;
         y = FIELD_HEIGHT / 2;
+        
     }
     sprite.setPosition(x, y);
 }
