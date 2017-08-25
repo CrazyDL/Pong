@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "Game.h"
 
-Player::Player(float x, float y, int32_t id) : x(x), y(y), id(id), score(0) {
+Player::Player(float x, float y, int8_t id) : x(x), y(y), id(id), score(0) {
     texture.loadFromFile("../Images/player.png");
     texture.setSmooth(true);
     sprite.setTexture(texture);
@@ -30,7 +30,6 @@ void Player::Update(float time) {
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
             y += time * PLAYER_SPEED;
-
         }
     }
     else {

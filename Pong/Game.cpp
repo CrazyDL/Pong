@@ -6,12 +6,13 @@ Game::Game() : player1(10 + HALF_PLAYER_WIDTH, FIELD_HEIGHT / 2, 1),
                window(sf::VideoMode(FIELD_WIDTH, FIELD_HEIGHT), "Pong", sf::Style::Close),
                active(false), newGame(true), pause(false) {
     window.setVerticalSyncEnabled(true);
+    window.setKeyRepeatEnabled(false);
     DrawField();
 }
 
 void Game::Menu() {
     menuFon.setSize(sf::Vector2f(FIELD_WIDTH / 3, FIELD_HEIGHT / 3));
-    menuFon.setOutlineColor(sf::Color(255, 255, 255, 220));
+    menuFon.setOutlineColor(sf::Color::White);
     menuFon.setOutlineThickness(2);
     menuFon.setFillColor(sf::Color(20, 20, 20));
     menuFon.setOrigin(FIELD_WIDTH / 6, FIELD_HEIGHT / 6);
@@ -22,14 +23,13 @@ void Game::Menu() {
     menuItems[2].setString("Exit");
 
     float maxHeight = (menuFon.getGlobalBounds().height / (MENU_COUNT * 2));
-    for (int32_t i = 0; i < MENU_COUNT; i++) {
+    for (int8_t i = 0; i < MENU_COUNT; i++) {
         menuItems[i].setFont(font);
         menuItems[i].setCharacterSize((uint32_t)(maxHeight * 1.5));
         menuItems[i].setFillColor(sf::Color::White);
         menuItems[i].setStyle(sf::Text::Bold);
         menuItems[i].setPosition(menuFon.getGlobalBounds().left + 20, menuFon.getGlobalBounds().top + maxHeight * 1.8f * i);
     }
-
 }
 
 void Game::DrawField() {
@@ -46,14 +46,16 @@ void Game::DrawField() {
 void Game::Start() {
     sf::Event event;
     float time;
+    int8_t menuNumKeyboard = -1;
     Menu();
     window.setKeyRepeatEnabled(false);
     while (window.isOpen()) {
         time = (float)clock.getElapsedTime().asMicroseconds();
         clock.restart();
-        if (player1.score == 7 || player2.score == 7) {
+        if ((player1.score == 7 || player2.score == 7) && !newGame) {
             active = false;
             newGame = true;
+            menuNumKeyboard = -1;
             if (player1.score == 7 ) {
                 score.setString("Left Player win!");
             }
@@ -61,7 +63,7 @@ void Game::Start() {
                 score.setString("Right Player win!");
             }
         }
-        else {
+        else if(player1.score != 7 && player2.score != 7) {
             score.setString(std::to_string(player1.score) + " : " + std::to_string(player2.score));
         }
         score.setPosition(FIELD_WIDTH / 2 - score.getGlobalBounds().width / 2, 0);
@@ -77,6 +79,27 @@ void Game::Start() {
             case sf::Event::GainedFocus:
                 pause = false;
                 break;
+            case sf::Event::KeyPressed:
+                if (!active && !pause) {
+                    if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::S) {
+                        menuNumKeyboard++;
+                        if (menuNumKeyboard >= MENU_COUNT) {
+                            menuNumKeyboard = 0;
+                        }
+                        if (menuNumKeyboard == 0 && newGame) {
+                            menuNumKeyboard++;
+                        }
+                        menuItems[menuNumKeyboard].setFillColor(sf::Color::Cyan);
+                    }
+                    if (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::W) {
+                        menuNumKeyboard--;
+                        if (menuNumKeyboard < 0 || (menuNumKeyboard == 0 && newGame)) {
+                            menuNumKeyboard = MENU_COUNT - 1;
+                        }
+                        menuItems[menuNumKeyboard].setFillColor(sf::Color::Cyan);
+                    }
+                }
+                break;
             default:
                 break;
             }
@@ -90,38 +113,39 @@ void Game::Start() {
                 ball.Update(time, player1, player2);
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
                     active = false;
+                    menuNumKeyboard = -1;
                 }
             }
             else {
                 int8_t menuNum = -1;
-                for (int32_t i = 0; i < MENU_COUNT; i++) {
+                for (int8_t i = 0; i < MENU_COUNT; i++) {
                     if (i == 0 && newGame) {
                         menuItems[i].setFillColor(sf::Color(128, 128, 128));
                         continue;
                     }
                     if (sf::IntRect(menuItems[i].getGlobalBounds()).contains(sf::Mouse::getPosition(window))) {
+                        if (menuNumKeyboard != -1) {
+                            menuItems[menuNumKeyboard].setFillColor(sf::Color::White);
+                        }
+                        menuNumKeyboard = -1;
                         menuItems[i].setFillColor(sf::Color::Cyan);
                         menuNum = i;
                     }
-                    else {
+                    else if(menuNumKeyboard != i){
                         menuItems[i].setFillColor(sf::Color::White);
                     }
                 }
 
-                if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                    switch (menuNum) {
-                    case 0:
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                    if (menuNum == 0 || menuNumKeyboard == 0) {
                         active = true;
-                        break;
-                    case 1:
+                    }
+                    else if (menuNum == 1 || menuNumKeyboard == 1) {
                         Reset();
                         active = true;
-                        break;
-                    case 2:
+                    }
+                    else if (menuNum == 2 || menuNumKeyboard == 2) {
                         window.close();
-                        break;
-                    default:
-                        break;
                     }
                 }
             }
@@ -134,7 +158,7 @@ void Game::Start() {
             window.draw(score);
             if (!active) {
                 window.draw(menuFon);
-                for (int32_t i = 0; i < MENU_COUNT; i++) {
+                for (int8_t i = 0; i < MENU_COUNT; i++) {
                     window.draw(menuItems[i]);
                 }
             }

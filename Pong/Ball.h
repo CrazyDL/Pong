@@ -2,9 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 
-const float BALL_SPEED = 0.0004f;
-const int32_t BALL_SIZE = 20;
-const int32_t HALF_BALL_SIZE = BALL_SIZE / 2;
+const float BALL_SPEED = 0.0007f;
+const uint16_t BALL_SIZE = 20;
+const uint16_t HALF_BALL_SIZE = BALL_SIZE / 2;
 
 class Game;
 

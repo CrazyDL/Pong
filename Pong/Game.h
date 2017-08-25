@@ -5,9 +5,9 @@
 #include "Player.h"
 #include "Ball.h"
 
-const int32_t FIELD_WIDTH = 800;
-const int32_t FIELD_HEIGHT = 600;
-const int32_t MENU_COUNT = 3;
+const int16_t FIELD_WIDTH = 1000;
+const int16_t FIELD_HEIGHT = 600;
+const int8_t MENU_COUNT = 3;
 
 class Game {
 public:

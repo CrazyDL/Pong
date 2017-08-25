@@ -13,20 +13,34 @@ Ball::Ball(float x, float y) : x(x), y(y), dx(0), dy(0) {
 bool Ball::CheckCollision(int8_t route, float playerX, float playerY) {
     switch (route){
     case 1: // Down
-        if (y + HALF_BALL_SIZE >= playerY - HALF_PLAYER_HEIGHT && y < playerY - HALF_PLAYER_HEIGHT && x + HALF_BALL_SIZE >= playerX - HALF_PLAYER_WIDTH && x - HALF_BALL_SIZE <= playerX + HALF_PLAYER_WIDTH)
+        if (y + HALF_BALL_SIZE >= playerY - HALF_PLAYER_HEIGHT
+                && y < playerY - HALF_PLAYER_HEIGHT
+                && x + HALF_BALL_SIZE >= playerX - HALF_PLAYER_WIDTH
+                && x - HALF_BALL_SIZE <= playerX + HALF_PLAYER_WIDTH) {
             return true;
+        }
         break;
     case 2: // Up
-        if (y - HALF_BALL_SIZE <= playerY + HALF_PLAYER_HEIGHT && y > playerY + HALF_PLAYER_HEIGHT && x + HALF_BALL_SIZE >= playerX - HALF_PLAYER_WIDTH && x - HALF_BALL_SIZE <= playerX + HALF_PLAYER_WIDTH)
+        if (y - HALF_BALL_SIZE <= playerY + HALF_PLAYER_HEIGHT
+                && y > playerY + HALF_PLAYER_HEIGHT
+                && x + HALF_BALL_SIZE >= playerX - HALF_PLAYER_WIDTH
+                && x - HALF_BALL_SIZE <= playerX + HALF_PLAYER_WIDTH) {
             return true;
+        }
         break;
     case 3: // Left
-        if (x - HALF_BALL_SIZE <= playerX + HALF_PLAYER_WIDTH && y + HALF_BALL_SIZE >= playerY - HALF_PLAYER_HEIGHT && y - HALF_BALL_SIZE <= playerY + HALF_PLAYER_HEIGHT)
+        if (x - HALF_BALL_SIZE <= playerX + HALF_PLAYER_WIDTH
+                && y + HALF_BALL_SIZE >= playerY - HALF_PLAYER_HEIGHT
+                && y - HALF_BALL_SIZE <= playerY + HALF_PLAYER_HEIGHT) {
             return true;
+        }
         break;
     case 4: // Right
-        if (x + HALF_BALL_SIZE >= playerX - HALF_PLAYER_WIDTH && y + HALF_BALL_SIZE >= playerY - HALF_PLAYER_HEIGHT && y - HALF_BALL_SIZE <= playerY + HALF_PLAYER_HEIGHT)
+        if (x + HALF_BALL_SIZE >= playerX - HALF_PLAYER_WIDTH 
+                && y + HALF_BALL_SIZE >= playerY - HALF_PLAYER_HEIGHT 
+                && y - HALF_BALL_SIZE <= playerY + HALF_PLAYER_HEIGHT) {
             return true;
+        }
         break;
     default:
         return false;
@@ -36,9 +50,9 @@ bool Ball::CheckCollision(int8_t route, float playerX, float playerY) {
 
 void Ball::Update(float time, Player &player1, Player &player2) {
     if (!dx && !dy) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-            int32_t rnd = std::rand() % 2;
-            dx = BALL_SPEED * (rnd ? 1.5f : -1.5f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            int8_t rnd = std::rand() % 2;
+            dx = BALL_SPEED * (rnd ? 1 : -1);
             rnd = std::rand() % 2;
             dy = BALL_SPEED * (rnd ? 1 : -1);
         }
@@ -66,10 +80,12 @@ void Ball::Update(float time, Player &player1, Player &player2) {
     }
 
     if (x + HALF_BALL_SIZE >= FIELD_WIDTH || x - HALF_BALL_SIZE <= 0) {
-        if (x + HALF_BALL_SIZE >= FIELD_WIDTH)
+        if (x + HALF_BALL_SIZE >= FIELD_WIDTH) {
             player1.score++;
-        else
+        }
+        else {
             player2.score++;
+        }
         dx = 0;
         dy = 0;
         x = FIELD_WIDTH / 2;
