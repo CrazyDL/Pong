@@ -33,10 +33,10 @@ void Game::Menu() {
 }
 
 void Game::DrawField() {
-    textureFon.loadFromFile("../Images/fon.png");
+    textureFon.loadFromFile("./Resurses/fon.png");
     spriteFon.setTexture(textureFon);
     spriteFon.setTextureRect(sf::IntRect(0, 0, FIELD_WIDTH, FIELD_HEIGHT));
-    font.loadFromFile("../Images/CyrilicOld.ttf");
+    font.loadFromFile("./Resurses/CyrilicOld.ttf");
     score.setFont(font);
     score.setCharacterSize(60);
     score.setFillColor(sf::Color::White);

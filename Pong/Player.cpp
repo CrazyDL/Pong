@@ -2,7 +2,7 @@
 #include "Game.h"
 
 Player::Player(float x, float y, int8_t id) : x(x), y(y), id(id), score(0) {
-    texture.loadFromFile("../Images/player.png");
+    texture.loadFromFile("./Resurses/player.png");
     texture.setSmooth(true);
     sprite.setTexture(texture);
     sprite.setTextureRect(sf::IntRect(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT));

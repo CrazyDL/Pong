@@ -1,8 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include "Game.h"
 
-int32_t main() {
+void main() {
     Game game;
     game.Start();
-    return 0;
+    return;
 }

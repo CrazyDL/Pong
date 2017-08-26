@@ -2,7 +2,7 @@
 #include "Game.h"
 
 Ball::Ball(float x, float y) : x(x), y(y), dx(0), dy(0) {
-    texture.loadFromFile("../Images/ball.png");
+    texture.loadFromFile("./Resurses/ball.png");
     texture.setSmooth(true);
     sprite.setTexture(texture);
     sprite.setTextureRect(sf::IntRect(0, 0, BALL_SIZE, BALL_SIZE));
